@@ -1,10 +1,33 @@
-import React, { useEffect } from 'react';
 import {View, StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import * as Location from 'expo-location'
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import MarkerIcon from "../Image/cloudy.png"
+
+
 
 export function Mapa()
 {
+
+  const [location, setLocation] = useState(null)
+
+  useEffect(() => {
+    getLocation()
+  }, [])
+
+  const getLocation = async () => {
+    let {status} = await Location.requestForegroundPermissionsAsync()
+
+    if(status === 'granted') {
+      let location = await Location.getCurrentPositionAsync()
+      setLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.00922,
+        longitudeDelta: 0.00421,
+      })
+    }
+  }
+
     const markers = [
            {
              coordinate: {
@@ -12,7 +35,7 @@ export function Mapa()
                longitude: -43.9452717,
              },
              title: "Praça Raul Soares",
-             
+            
              description:
                "Praça localizada no bairro Barro Preto.",
            },
@@ -35,7 +58,7 @@ export function Mapa()
                coordinate={marker.coordinate}
                title={marker.title}
                description={marker.description}
-               //image={marker.image}
+               image={require('../Image/kid.png')}
              />
            ));
          };
@@ -45,15 +68,18 @@ export function Mapa()
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.map}
-          region={{
-            latitude: -19.9194405,
-            longitude: -43.9395354,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          }}
+          initialRegion={location}
         >
+          {
+          location && 
+          <Marker 
+            coordinate={location}
+            title='Você'
+            description='Você está aqui!'
+          />
+        }
 
-{renderMarkers()}
+        {renderMarkers()}
 
         </MapView>
       </View>
