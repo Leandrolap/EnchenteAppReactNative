@@ -1,11 +1,12 @@
 import {View, StyleSheet} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as Location from 'expo-location'
+import { FloatingAction } from "react-native-floating-action";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { NovaOcorrencia } from './NovaOcorrencia';
 
 
-
-export function Mapa()
+export function Mapa({navigation})
 {
 
   const [location, setLocation] = useState(null)
@@ -63,6 +64,21 @@ export function Mapa()
            ));
          };
 
+         const actions = [
+          {
+            text: "Nova Ocorrência",
+            icon: require("../Image/kid.png"),
+            name: "bt_nova_ocorrencia",
+            position: 1
+          },
+          {
+            text: "Ligação de Emergência",
+            icon: require("../Image/kid.png"),
+            name: "bt_ligacao_emergencia",
+            position: 2
+          }
+        ];
+
     return(       
         <View style={styles.container}>
         <MapView
@@ -82,6 +98,16 @@ export function Mapa()
         {renderMarkers()}
 
         </MapView>
+
+        <FloatingAction
+    actions={actions}
+    onPressItem={name => {
+      if (name === 'bt_nova_ocorrencia') {
+        navigation.navigate('Ocorrencia');
+      }
+      // Adicione outras navegações se necessário
+    }}
+  />
       </View>
     );
 }
