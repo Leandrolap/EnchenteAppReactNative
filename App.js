@@ -12,8 +12,7 @@ const Drawer = createDrawerNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-     <Drawer.Navigator initialRouteName='Inicio'
-                       drawerContent={CustomDrawer}>
+     <Drawer.Navigator initialRouteName='Inicio' drawerContent={CustomDrawer}>
       <Drawer.Screen name='Inicio' component={Mapa}/>
       <Drawer.Screen name='Ocorrencia' component={NovaOcorrencia}/>
      </Drawer.Navigator>
