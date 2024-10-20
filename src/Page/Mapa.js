@@ -1,19 +1,33 @@
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ToastAndroid, Text, Linking, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import { FloatingAction } from 'react-native-floating-action';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../Componentes/firebaseConnection';
+import Modal from "react-native-modal";
 
 export function Mapa({ navigation }) {
   const [location, setLocation] = useState(null);
   const [ocorrencias, setOcorrencias] = useState([]);
   const mapRef = useRef(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const showToast = () => {
     ToastAndroid.show('Mapa atualizado', ToastAndroid.SHORT);
   };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const defesaCivil = () => {
+    Linking.openURL('tel:199')
+  }
+
+  const bombeiros = () => {
+    Linking.openURL('tel:193')
+  }
 
   useEffect(() => {
     getLocation();
@@ -73,7 +87,7 @@ export function Mapa({ navigation }) {
         }}
         title={marker.titulo}
         description={marker.descricao}
-        image={require('../Image/kid.png')} // Ajuste o caminho conforme necessário
+        image={require('../Image/caution.png')} // Ajuste o caminho conforme necessário
       />
     ));
   };
@@ -81,25 +95,25 @@ export function Mapa({ navigation }) {
   const actions = [
     {
       text: 'NOVA OCORRÊNCIA',
-      icon: require('../Image/kid.png'),
+      icon: require('../Image/pen.png'),
       name: 'bt_nova_ocorrencia',
       position: 1,
     },
     {
       text: 'CONTATO DE EMERGÊNCIA',
-      icon: require('../Image/kid.png'),
+      icon: require('../Image/emergency.png'),
       name: 'bt_ligacao_emergencia',
       position: 2,
     },
     {
       text: 'ATUALIZAR MAPA',
-      icon: require('../Image/kid.png'),
+      icon: require('../Image/refresh.png'),
       name: 'bt_atualizar_mapa',
       position: 3,
     },
     {
       text: 'MINHA LOCALIZAÇÃO',
-      icon: require('../Image/kid.png'),
+      icon: require('../Image/newOcorrencia.png'),
       name: 'bt_minha_localizacao',
       position: 4,
     },
@@ -112,9 +126,11 @@ export function Mapa({ navigation }) {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={location}
-      >
+        trafficEnabled={true}>
+
         {location && (
-          <Marker coordinate={location} title="Você" description="Você está aqui!" />
+          <Marker coordinate={location} title="Você" description="Você está aqui!" 
+          icon={require('../Image/kid.png')}/>
         )}
         {renderMarkers()}
       </MapView>
@@ -128,10 +144,42 @@ export function Mapa({ navigation }) {
             showToast();
           } else if (name === 'bt_minha_localizacao') {
             getLocation();
+          } else if (name === 'bt_ligacao_emergencia')
+          {
+            {toggleModal()}
           }
         }}
       />
+
+<Modal isVisible={isModalVisible} animationIn={'pulse'}>
+    <View style={{ flex: 1 }}>
+      <View style={{flex: 1,flexDirection: 'column', justifyContent: 'center'}}>
+        <View style={{flexDirection: 'row', alignContent: 'space-around', justifyContent: 'space-between', margin: 25}}>
+          <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Defesa Civil</Text>
+          <TouchableOpacity style={{backgroundColor: '#fb1c0a', padding: 10, borderRadius: 5, width: 60, alignItems: 'center'}}
+                            onPress={defesaCivil}>
+            <Text style={{color: 'white'}}>Ligar</Text>
+          </TouchableOpacity>
+        </View>
+          
+        <View style={{flexDirection: 'row', alignContent: 'space-around', justifyContent: 'space-between', margin: 25}}>
+          <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Corpo de Bombeiros</Text>
+          <TouchableOpacity style={{backgroundColor: '#fb1c0a', padding: 10, borderRadius: 5, width: 60, alignItems: 'center'}}
+                            onPress={bombeiros}>
+            <Text style={{color: 'white'}}>Ligar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+    <TouchableOpacity style={{backgroundColor: '#fb1c0a', padding: 10, borderRadius: 22, alignItems: 'center'}}
+                      onPress={toggleModal}>
+      <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
+        Fechar
+      </Text>
+    </TouchableOpacity>
     </View>
+</Modal>
+</View>
   );
 }
 

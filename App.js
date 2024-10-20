@@ -6,6 +6,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import { Mapa } from './src/Page/Mapa';
 import { NovaOcorrencia } from './src/Page/NovaOcorrencia';
 import { CustomDrawer } from './src/Componentes/CustomDrawer';
+import { Previsao } from './src/Page/Previsao'
 
 const Drawer = createDrawerNavigator();
 
@@ -15,6 +16,7 @@ export default function App() {
      <Drawer.Navigator initialRouteName='Inicio' drawerContent={CustomDrawer}>
       <Drawer.Screen name='Inicio' component={Mapa}/>
       <Drawer.Screen name='Ocorrencia' component={NovaOcorrencia}/>
+      <Drawer.Screen name='Previsão do Tempo' component={Previsao}/>
      </Drawer.Navigator>
     </NavigationContainer>
   )
