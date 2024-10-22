@@ -22,4 +22,4 @@ const firebaseConfig = {
     persistence: getReactNativePersistence(AsyncStorage)
   })
 
-  export {db};
+  export {db, auth};
